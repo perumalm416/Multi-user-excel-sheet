@@ -1,8 +1,7 @@
-import { render, screen } from '@testing-library/react';
-import App from './App';
-
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+import { screen } from "@testing-library/react";
+describe("item", () => {
+  it("render the user-list-item", () => {
+    const listItemElement = screen.queryAllByTestId("listitem");
+    expect(listItemElement).toHaveLength(3);
+  });
 });
