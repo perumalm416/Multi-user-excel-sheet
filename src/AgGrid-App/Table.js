@@ -1,9 +1,10 @@
 import { AgGridReact } from "ag-grid-react";
 import { Fragment, useState } from "react";
 import "./AgGridApp.css";
-import "ag-grid-enterprise";
+
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
+import "ag-grid-enterprise";
 
 export const Table = () => {
   const [gridApi, setGridApi] = useState("");
@@ -23,17 +24,25 @@ export const Table = () => {
       field: "name",
       checkboxSelection: true,
       headerCheckboxSelection: true,
+      filter: "agTextColumnFilter",
     },
     {
       headerName: "Email",
       field: "email",
       tooltipField: "name",
+      filter: "agTextColumnFilter",
       cellClass: (param) => (param.value !== 23 ? "notAge23" : "Age23"),
     },
-    { headerName: "Body", field: "body", hide: toggleColumn },
+    {
+      headerName: "Body",
+      field: "body",
+      hide: toggleColumn,
+      filter: "agTextColumnFilter",
+    },
     {
       headerName: "Action",
       field: "name",
+      filter: "agTextColumnFilter",
       cellRendererFramework: (param) => (
         <div>
           <button onClick={() => console.log(param.value)}>Action</button>
@@ -44,7 +53,7 @@ export const Table = () => {
   const columnDefsProperty = {
     sortable: true,
     editable: true,
-    filter: "agTextColumnFilter",
+    filter: true,
     floatingFilter: true,
     flex: 1,
   };
@@ -58,10 +67,15 @@ export const Table = () => {
   const datasource = {
     getRows(param) {
       console.log(JSON.stringify(param.request, null, 1));
-      const { startRow, endRow } = param.request;
-      const url = "http://localhost:4001/comments";
+      const { startRow, endRow, sortModel, filterModel } = param.request;
+      let url = "http://localhost:4001/comments?";
+      const sortItem = Object.keys(filterModel);
+      sortItem.forEach(item => {url += `${item}=${filterModel[item].item}&`});
       //pagination in serverside
       console.log(startRow, endRow);
+      url += `_start=${startRow}&_end=${endRow}`;
+      //filter
+      
       fetch(url)
         .then((res) => res.json())
         .then((res) => {
@@ -149,3 +163,8 @@ export const Table = () => {
     </Fragment>
   );
 };
+ 
+
+
+
+                                                                                           
